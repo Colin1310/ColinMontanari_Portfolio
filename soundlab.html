@@ -7,15 +7,15 @@
   <meta name="theme-color" content="#0b0d11">
   <title>SoundLab — Colin Montanari</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230b0d11'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Arial,sans-serif' font-size='29' font-weight='700' fill='%235078ff'%3ECM%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="soundlab.css">
+  <link rel="stylesheet" href="soundlab.css?v=20261005-games">
   <script src="soundlab-physics.js" defer></script>
-  <script src="soundlab.js" defer></script>
+  <script src="soundlab.js?v=20261005-games" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main" data-copy="skip">Aller au contenu</a>
   <header class="shell"><div class="nav">
     <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">CM</span>Colin Montanari</a>
-    <div class="nav-actions"><a class="back" href="index.html" data-copy="back">↖ Retour au portfolio</a>
+    <div class="nav-actions"><nav class="page-links" aria-label="Navigation"><a class="back" href="index.html" data-copy="back">↖ Retour au portfolio</a><a class="back" href="jeux.html" data-copy="games">Jeux d’écoute</a></nav>
       <div class="language-switch" role="group" aria-label="Langue">
         <button type="button" data-language="fr" aria-label="Français" aria-pressed="true">FR</button>
         <button type="button" data-language="en" aria-label="English" aria-pressed="false">EN</button>
@@ -25,7 +25,7 @@
   <main class="shell" id="main">
     <section class="intro" aria-labelledby="title">
       <div><p class="mono eyebrow" data-copy="eyebrow">Colin Montanari / Explorer le son</p><h1 id="title">SoundLab<span>.</span></h1></div>
-      <div class="intro-copy"><p data-copy="intro">Le son se comprend aussi avec les yeux. Cinq expériences pour observer, manipuler et écouter ce qui se passe dans l’air.</p><p class="intro-note" data-copy="introNote">Choisis un atelier, bouge un réglage, puis essaie le défi.</p></div>
+      <div class="intro-copy"><p data-copy="intro">Ateliers interactifs sur la fréquence, l’amplitude et la propagation du son dans l’air.</p><p class="intro-note" data-copy="introNote">Sélectionnez un phénomène et manipulez les repères dans la visualisation.</p></div>
     </section>
     <nav class="workshops" aria-label="Ateliers SoundLab">
       <button class="workshop" type="button" data-workshop="frequency" aria-pressed="true" aria-controls="studio"><span class="workshop-top"><span class="mono">01</span><svg viewBox="0 0 76 26" aria-hidden="true"><path d="M0 13Q9-9 19 13T38 13T57 13T76 13"/></svg></span><strong data-copy="frequency">Fréquence</strong></button>
@@ -35,15 +35,15 @@
       <button class="workshop" type="button" data-workshop="diffraction" aria-pressed="false" aria-controls="studio"><span class="workshop-top"><span class="mono">05</span><svg viewBox="0 0 76 26" aria-hidden="true"><path d="M12 0V26M22 0V26M34 0V9M34 17V26M45 5Q53 13 45 21M55 0Q66 13 55 26"/></svg></span><strong data-copy="diffraction">Diffraction</strong></button>
     </nav>
     <section class="studio" id="studio" aria-labelledby="workshop-title">
-      <div class="studio-heading"><div><p class="mono" id="workshop-number">Atelier 01 / 05</p><h2 id="workshop-title">Du grave à l’aigu.</h2></div><div class="transport"><button class="small-button" type="button" id="pause" aria-pressed="false" data-copy="pause">Mettre en pause</button><button class="small-button" type="button" id="reset" data-copy="reset">Réinitialiser</button></div></div>
+      <div class="studio-heading"><div><p class="mono" id="workshop-number">Atelier 01 / 05</p><h2 id="workshop-title">Fréquence</h2></div><div class="transport"><button class="small-button" type="button" id="pause" aria-pressed="false" data-copy="pause">Mettre en pause</button><button class="small-button" type="button" id="reset" data-copy="reset">Réinitialiser</button></div></div>
       <div class="studio-body">
-        <div class="visual"><div class="canvas-wrap"><canvas id="lab-canvas" role="img" aria-label="Animation du mouvement longitudinal des particules d’air et de la pression"></canvas></div><div class="visual-caption"><div class="legend" id="legend"></div><span id="view-note"></span></div></div>
-        <div class="controls"><div id="inputs"></div><div class="metrics" id="metrics"></div><button type="button" class="small-button listen" id="listen" aria-pressed="false" data-copy="listen">Écouter le son</button><p class="audio-note" id="audio-note" data-copy="audioNote">Son pur, fréquence réelle. Niveau d’écoute modéré.</p><p class="audio-error" id="audio-error" role="status" hidden></p><p class="formula" id="formula"></p></div>
+        <div class="visual"><div class="canvas-wrap"><canvas id="lab-canvas" role="group" tabindex="0" aria-describedby="interaction-instructions" aria-label="Mouvement longitudinal des particules d’air et pression"></canvas></div><div class="visual-caption"><div class="legend" id="legend"></div><span id="view-note"></span></div><p class="interaction-instructions" id="interaction-instructions"></p></div>
+        <div class="controls"><div id="inputs"></div><div class="metrics" id="metrics"></div><div class="probe-readout" id="probe-readout" hidden><div class="probe-label"><span data-copy="probePressure">Pression locale</span><span id="probe-value">0</span></div><canvas id="probe-trace" width="280" height="76" role="img" aria-label="Historique de la pression au capteur"></canvas><p data-copy="probeNote">Valeurs relatives du modèle. Le tracé suit la pression au capteur.</p></div><button type="button" class="small-button listen" id="listen" aria-pressed="false" data-copy="listen">Écouter le son</button><p class="audio-note" id="audio-note" data-copy="audioNote">Son pur, fréquence réelle. Niveau d’écoute modéré.</p><p class="audio-error" id="audio-error" role="status" hidden></p><p class="formula" id="formula"></p></div>
       </div>
     </section>
-    <section class="explanation" aria-labelledby="explanation-title"><div><h3 id="explanation-title" data-copy="observe">Ce qu’il faut observer</h3><p id="explanation"></p></div><div class="challenge"><p class="mono" data-copy="try">À toi d’essayer</p><p id="challenge-text"></p><button class="small-button" type="button" id="challenge"></button></div></section>
+    <section class="explanation" aria-labelledby="explanation-title"><div><h3 id="explanation-title" data-copy="observe">Observations</h3><p id="explanation"></p></div><div class="challenge"><p class="mono" data-copy="try">Expérience</p><p id="challenge-text"></p><button class="small-button" type="button" id="challenge"></button></div></section>
     <section class="method" aria-label="À propos des expériences"><div><p data-copy="method">Modèles pédagogiques : animations ralenties, déplacements des particules amplifiés. Air homogène à environ 20 °C, vitesse du son ≈ 343 m/s. Les courbes montrent des variations de pression ; l’air oscille sur place.</p></div><div><p data-copy="sources">Pour approfondir les phénomènes :</p><div class="sources"><a href="https://www.acs.psu.edu/drussell/demos.html" target="_blank" rel="noopener">Penn State · Acoustics</a><a href="https://openstax.org/books/college-physics-2e/pages/17-3-sound-intensity-and-sound-level" target="_blank" rel="noopener">OpenStax · Sound intensity</a><a href="https://openstax.org/books/university-physics-volume-3/pages/4-1-single-slit-diffraction" target="_blank" rel="noopener">OpenStax · Diffraction</a></div></div></section>
-    <noscript><p>Active JavaScript pour utiliser les ateliers interactifs. / Enable JavaScript to use the interactive workshops.</p></noscript>
+    <noscript><p>Activez JavaScript pour utiliser les ateliers interactifs. / Enable JavaScript to use the interactive workshops.</p></noscript>
   </main>
   <footer class="shell"><span>Colin Montanari · <span lang="en">Technical Sound Designer</span></span><a href="index.html" data-copy="back">↖ Retour au portfolio</a></footer>
 </body>

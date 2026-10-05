@@ -4,7 +4,27 @@ const SoundLabPhysics = (() => {
   const wavelength = frequency => speed / frequency;
   const intensity = amplitude => amplitude * amplitude;
   const relativeDb = (amplitude, reference = .5) => 20 * Math.log10(amplitude / reference);
-  const interference = phaseDegrees => 2 * Math.abs(Math.cos(phaseDegrees * Math.PI / 360));
+  const interference = (phaseDegrees, ratio = 1) => Math.hypot(1 + ratio * Math.cos(phaseDegrees * Math.PI / 180), ratio * Math.sin(phaseDegrees * Math.PI / 180));
+  const clamp = (v,min,max) => Math.max(min,Math.min(max,v));
+  const wrap = v => ((v % 360) + 360) % 360;
+  // Pointer gestures use the same physical parameters as the accessible sliders.
+  function gesture(kind, point, origin, geometry) {
+    if (kind === 'wavelength') return {frequency: Math.round(clamp(speed * geometry.w / (4 * Math.max(1,point.x-geometry.x)),100,1000)/10)*10};
+    if (kind === 'amplitude') return {amplitude: clamp(Math.round(100*(geometry.y-point.y)/geometry.h),5,100)};
+    if (kind === 'waveB') {
+      let phase=Math.round(wrap(origin.phase - 720*(point.x-origin.x)/geometry.w)) % 360;
+      const landmark=[0,90,180,270,360].find(value=>Math.abs(value-phase)<=2);
+      if(landmark!==undefined)phase=landmark%360;
+      return {phase,amplitudeB:clamp(Math.round(100*(geometry.y-point.y)/geometry.h),0,100)};
+    }
+    if (kind === 'source') return {angle: clamp(Math.round(Math.atan2(Math.max(0,point.y-geometry.cy),Math.max(1,geometry.wx-point.x))*180/Math.PI),10,65)};
+    if (kind === 'apertureTop' || kind === 'apertureBottom') return {aperture: Math.round(clamp(2*Math.abs(point.y-geometry.cy)/(geometry.scale*14),.4,3)*10)/10};
+    if (kind === 'probe') return {
+      probeX: clamp(Math.round((point.x-geometry.x)/geometry.w*100),10,90),
+      probeY: clamp(Math.round((point.y-geometry.y)/geometry.h*100),10,90)
+    };
+    return {};
+  }
   const reflect = (vx, vy, nx, ny) => {
     const dot = vx * nx + vy * ny;
     return {x: vx - 2 * dot * nx, y: vy - 2 * dot * ny};
@@ -24,7 +44,7 @@ const SoundLabPhysics = (() => {
       }
       this.setAperture(1);
     }
-    setAperture(ratio) {
+    setAperture(ratio, preserve = false) {
       this.ratio = Math.max(.4, Math.min(3, ratio));
       this.gap = this.ratio * this.lambda;
       this.solid.fill(0);
@@ -32,7 +52,14 @@ const SoundLabPhysics = (() => {
         if (Math.abs(y - (this.ny - 1) / 2) > this.gap / 2)
           for (let x = this.wall - 1; x <= this.wall + 1; x++) this.solid[y * this.nx + x] = 1;
       }
-      this.clear();
+      if (preserve) {
+        for (let i=0;i<this.p.length;i++) if(this.solid[i]) this.p[i]=this.old[i]=this.next[i]=0;
+      } else this.clear();
+    }
+    sample(x,y) {
+      const gx=clamp(x,0,1)*(this.nx-1),gy=clamp(y,0,1)*(this.ny-1);
+      const x0=Math.min(this.nx-2,Math.floor(gx)),y0=Math.min(this.ny-2,Math.floor(gy)),fx=gx-x0,fy=gy-y0,i=y0*this.nx+x0;
+      return (this.p[i]*(1-fx)+this.p[i+1]*fx)*(1-fy)+(this.p[i+this.nx]*(1-fx)+this.p[i+this.nx+1]*fx)*fy;
     }
     clear() { this.p.fill(0); this.old.fill(0); this.next.fill(0); this.phase = 0; }
     step() {
@@ -53,6 +80,6 @@ const SoundLabPhysics = (() => {
       this.old = p; this.p = next; this.next = old;
     }
   }
-  return {speed, wavelength, intensity, relativeDb, interference, reflect, ApertureField};
+  return {speed, wavelength, intensity, relativeDb, interference, reflect, gesture, ApertureField};
 })();
 if (typeof module !== 'undefined') module.exports = SoundLabPhysics;
