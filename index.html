@@ -145,6 +145,9 @@
     .wave-toggle[aria-pressed="false"] { text-decoration:line-through; }
     .wave-toggle:hover { color:var(--text); }
     @media (prefers-reduced-motion:reduce) { #page-acoustics,.acoustic-invitation { display:none; } }
+
+    /* Leave room for SoundLab and language controls on smaller screens. */
+    @media (max-width:860px) { .nav { flex-wrap:wrap; padding-block:15px 12px; gap:12px; } .nav-actions { display:contents; } .brand { order:1; } .language-switch { order:2; margin-left:auto; } .nav-links { order:3; width:100%; justify-content:space-between; gap:10px; } html { scroll-padding-top:126px; } }
   </style>
 </head>
 <body>
@@ -153,7 +156,7 @@
   <header>
     <div class="shell nav">
       <a class="brand" href="#top" aria-label="Colin Montanari, back to top" data-i18n-aria-label="text68"><span class="brand-mark" aria-hidden="true">CM</span>Colin Montanari</a>
-      <div class="nav-actions"><nav class="nav-links" aria-label="Main navigation" data-i18n-aria-label="text69"><a href="#projects" data-i18n="text2">Work</a><a href="#about" data-i18n="text3">About</a><a href="#skills" data-i18n="text4">Toolkit</a><a class="contact-nav" href="#contact">Contact</a></nav>
+      <div class="nav-actions"><nav class="nav-links" aria-label="Main navigation" data-i18n-aria-label="text69"><a href="#projects" data-i18n="text2">Work</a><a href="#about" data-i18n="text3">About</a><a href="#skills" data-i18n="text4">Toolkit</a><a href="soundlab.html">SoundLab</a><a class="contact-nav" href="#contact">Contact</a></nav>
         <div class="language-switch" role="group" aria-label="Language" data-i18n-aria-label="language">
           <button type="button" data-language="fr" lang="fr" aria-label="Français" aria-pressed="false">FR</button>
           <button type="button" data-language="en" lang="en" aria-label="English" aria-pressed="true">EN</button>
