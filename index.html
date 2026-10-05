@@ -32,7 +32,11 @@
     .nav-links a { padding:8px 0; color:var(--muted); transition:color .2s; }
     .nav-links a:hover { color:var(--text); }
     .nav-links .contact-nav { color:var(--text); border-bottom:1px solid var(--electric); }
-    .hero { padding-block:clamp(52px,6vw,108px) 46px; }
+    .hero { position:relative; isolation:isolate; padding-block:clamp(52px,6vw,108px) 46px; }
+    .sound-wave { position:absolute; inset:0; z-index:-1; width:100%; height:100%; pointer-events:none; overflow:hidden; }
+    .sound-wave path { fill:none; stroke:url(#wave-color); stroke-width:1.5; vector-effect:non-scaling-stroke; }
+    .sound-wave .wave-secondary { opacity:.4; stroke-width:1; }
+    .sound-wave .wave-main { opacity:.75; }
     .hero-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:clamp(32px,6vw,120px); align-items:center; }
     .eyebrow { color:var(--blue); margin:0 0 26px; }
     h1 { font-size:clamp(3.5rem,5.45vw,8.5rem); line-height:1.03; letter-spacing:-.065em; font-weight:650; margin:0 0 30px; }
@@ -133,6 +137,12 @@
   </header>
   <main id="main">
     <section class="hero shell" id="top" aria-labelledby="hero-title">
+      <svg class="sound-wave" aria-hidden="true" focusable="false" viewBox="0 0 1440 640" preserveAspectRatio="none">
+        <defs><linearGradient id="wave-color"><stop offset="0" stop-color="#5078ff" stop-opacity="0"/><stop offset=".18" stop-color="#5078ff"/><stop offset=".6" stop-color="#8cb8ff"/><stop offset="1" stop-color="#5078ff" stop-opacity="0"/></linearGradient></defs>
+        <path class="wave-secondary" d="M0 280 Q180 255 360 280 T720 280 T1080 280 T1440 280"/>
+        <path class="wave-main" d="M0 265 Q180 240 360 265 T720 265 T1080 265 T1440 265"/>
+        <path class="wave-secondary" d="M0 250 Q180 225 360 250 T720 250 T1080 250 T1440 250"/>
+      </svg>
       <div class="hero-grid">
         <div>
           <p class="eyebrow mono">Colin Montanari / Game audio</p>
@@ -312,6 +322,103 @@
   </main>
   <footer class="shell"><div class="footer-inner"><span>© 2026 Colin Montanari</span><span>Technical Sound Designer</span><a href="#top">Back to top</a></div></footer>
   <script>
+    (() => {
+      const hero = document.querySelector('.hero');
+      const svg = hero.querySelector('.sound-wave');
+      const title = hero.querySelector('h1');
+      const paths = [...svg.querySelectorAll('path')];
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+      let width = 1440, height = 640, base = 265, visible = false, frame = 0;
+      let previousTime = 0, lastPaint = 0, phase = 0;
+      let mouseX = .4, targetX = .4, pull = 0, targetPull = 0;
+      let strength = 0, targetStrength = 0, impulse = 0;
+      let lastPointerX = null, lastPointerY = null, lastPointerTime = 0;
+
+      function draw() {
+        const amplitude = width < 600 ? 10 : 17;
+        const reach = Math.max(100, width * .15);
+        const segments = Math.min(220, Math.max(70, Math.ceil(width / 8)));
+        paths.forEach((path, layer) => {
+          let line = '';
+          for (let i = 0; i <= segments; i++) {
+            const x = width * i / segments;
+            const envelope = Math.pow(Math.sin(Math.PI * i / segments), .8);
+            const distance = (x - mouseX * width) / reach;
+            const local = Math.exp(-distance * distance * 2);
+            const idle = Math.sin(x / 87 - phase + layer * .42)
+              * Math.sin(x / 213 + phase * .32) * amplitude;
+            const ripple = Math.sin(x / 31 - phase * 2.7 + layer * .6)
+              * (strength * 24 + impulse * 30) * local;
+            const y = base + (layer - 1) * 14 + envelope
+              * (idle + ripple + local * pull * strength);
+            line += `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)} `;
+          }
+          path.setAttribute('d', line);
+        });
+      }
+
+      function tick(time) {
+        frame = 0;
+        if (!visible || document.hidden || reducedMotion.matches) return;
+        if (time - lastPaint >= 1000 / 30) {
+          const delta = Math.min((time - (previousTime || time)) / 1000, .08);
+          previousTime = time; lastPaint = time;
+          phase += delta * .65;
+          const easing = 1 - Math.exp(-delta * 7);
+          mouseX += (targetX - mouseX) * easing;
+          pull += (targetPull - pull) * easing;
+          strength += (targetStrength - strength) * easing;
+          targetStrength *= Math.exp(-delta * 1.1);
+          impulse *= Math.exp(-delta * 2.2);
+          draw();
+        }
+        frame = requestAnimationFrame(tick);
+      }
+
+      function sync() {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0; previousTime = 0; lastPaint = 0;
+        if (reducedMotion.matches) {
+          phase = 0; strength = 0; impulse = 0; pull = 0;
+          targetStrength = 0; targetPull = 0;
+          draw();
+        } else if (visible && !document.hidden) {
+          frame = requestAnimationFrame(tick);
+        }
+      }
+
+      hero.addEventListener('pointermove', event => {
+        if (!finePointer.matches || reducedMotion.matches || event.pointerType !== 'mouse') return;
+        const rect = hero.getBoundingClientRect();
+        targetX = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+        targetPull = Math.max(-55, Math.min(55, (event.clientY - rect.top - base) * .22));
+        targetStrength = 1;
+        const now = performance.now();
+        if (lastPointerX !== null && now - lastPointerTime < 180) {
+          const speed = Math.hypot(event.clientX - lastPointerX, event.clientY - lastPointerY)
+            / Math.max(8, now - lastPointerTime);
+          impulse = Math.min(1, impulse + speed * .1);
+        }
+        lastPointerX = event.clientX; lastPointerY = event.clientY; lastPointerTime = now;
+      }, {passive:true});
+      hero.addEventListener('pointerleave', () => {
+        targetStrength = 0; targetPull = 0; lastPointerX = null;
+      }, {passive:true});
+      new ResizeObserver(() => {
+        width = hero.clientWidth; height = hero.clientHeight;
+        const titleRect = title.getBoundingClientRect();
+        base = titleRect.top - hero.getBoundingClientRect().top + titleRect.height * .7;
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        draw();
+      }).observe(hero);
+      new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting; sync();
+      }).observe(hero);
+      document.addEventListener('visibilitychange', sync);
+      reducedMotion.addEventListener('change', sync);
+      draw();
+    })();
     (() => {
       const pointer = matchMedia('(hover: hover) and (pointer: fine)');
       const motion = matchMedia('(prefers-reduced-motion: reduce)');
