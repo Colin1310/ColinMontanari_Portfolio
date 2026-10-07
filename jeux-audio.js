@@ -2,7 +2,7 @@ class ListeningAudio {
   constructor(onPlayback=()=>{}) {this.context=null;this.master=null;this.voice=null;this.version=0;this.volume=.3;this.onPlayback=onPlayback;}
   static buildVoice(context,spec,destination) {
     const gain=context.createGain();gain.gain.value=0;gain.connect(destination);
-    let source;const nodes=[gain];
+    let source;const nodes=[gain],sources=[];
     if(spec.type==='location') {
       const buffer=context.createBuffer(1,Math.ceil(context.sampleRate*1.8),context.sampleRate),data=buffer.getChannelData(0),random=ListeningGames.seededRandom(spec.seed);
       for(let i=0;i<data.length;i++)data[i]=(random()*2-1)*.7;
@@ -12,6 +12,12 @@ class ListeningAudio {
       const position=ListeningGames.sourcePosition(spec.angle);
       panner.positionX.value=position.x;panner.positionY.value=position.y;panner.positionZ.value=position.z;
       source.connect(filter);filter.connect(panner);panner.connect(gain);nodes.push(filter,panner);
+    } else if(spec.type==='beats') {
+      const mixer=context.createGain();mixer.gain.value=.5;mixer.connect(gain);nodes.push(mixer);
+      for(const frequency of [spec.fundamental,spec.fundamental+spec.rate]){
+        const oscillator=context.createOscillator();oscillator.type='sine';oscillator.frequency.value=frequency;oscillator.connect(mixer);sources.push(oscillator);nodes.push(oscillator);
+      }
+      source=sources[0];
     } else {
       source=context.createOscillator();source.type='sine';source.frequency.value=spec.frequency || spec.fundamental;
       if(spec.type==='harmonics') {
@@ -20,11 +26,11 @@ class ListeningAudio {
       }
       source.connect(gain);
     }
-    nodes.push(source);
-    return {source,gain,nodes,start(now,duration=1.7){
+    if(spec.type!=='beats'){sources.push(source);nodes.push(source);}
+    return {source,gain,nodes,sources,start(now,duration=spec.type==='beats'?8:1.7){
       gain.gain.setValueAtTime(0,now);gain.gain.linearRampToValueAtTime(1,now+.025);
       gain.gain.setValueAtTime(1,now+duration-.08);gain.gain.linearRampToValueAtTime(0,now+duration);
-      source.start(now);source.stop(now+duration);
+      for(const oscillator of sources){oscillator.start(now);oscillator.stop(now+duration);}
     },cleanup(){for(const node of nodes)try{node.disconnect();}catch{}}};
   }
   setVolume(percent) {
@@ -36,7 +42,7 @@ class ListeningAudio {
     if(!voice)return;
     const now=this.context.currentTime;
     if(voice.gain.gain.cancelAndHoldAtTime)voice.gain.gain.cancelAndHoldAtTime(now);else voice.gain.gain.cancelScheduledValues(now);
-    voice.gain.gain.setTargetAtTime(0,now,.012);try{voice.source.stop(now+.06);}catch{}
+    voice.gain.gain.setTargetAtTime(0,now,.012);for(const source of voice.sources)try{source.stop(now+.06);}catch{}
   }
   async play(spec,label) {
     this.stop();const version=this.version;

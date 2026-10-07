@@ -22,6 +22,7 @@ const ListeningGames = (() => {
   function generate(type, random = Math.random) {
     if(type === 'frequency') return {frequency:frequencyAt(random())};
     if(type === 'location') return {angle:Math.round((random()*140-70)/5)*5, seed:Math.floor(random()*4294967295)};
+    if(type === 'beats') return {fundamental:220,rate:1+Math.min(11,Math.floor(random()*12))};
     const fundamental = [110,165,220,330][Math.min(3,Math.floor(random()*4))];
     const amplitudes = [1,...Array.from({length:5},()=>Math.floor(random()*4)/4)];
     if(amplitudes.slice(1).every(value=>value===0))amplitudes[1]=.5;
@@ -30,12 +31,14 @@ const ListeningGames = (() => {
   function valid(type, guess) {
     if(type==='frequency')return Number.isFinite(guess.frequency) && guess.frequency>=minimum && guess.frequency<=maximum;
     if(type==='location')return Number.isFinite(guess.angle) && guess.angle>=-75 && guess.angle<=75;
+    if(type==='beats')return Number.isFinite(guess.rate) && guess.rate>=1 && guess.rate<=12;
     return Array.isArray(guess.amplitudes) && guess.amplitudes.length===6 && guess.amplitudes[0]===1 && guess.amplitudes.every(value=>Number.isFinite(value)&&value>=0&&value<=1);
   }
   function grade(type,guess,target,hinted=false) {
     let error, raw;
     if(type==='frequency'){error=pitchError(guess.frequency,target.frequency);raw=100*Math.exp(-Math.abs(error)/600);}
     else if(type==='location'){error=guess.angle-target.angle;raw=100*Math.exp(-Math.abs(error)/25);}
+    else if(type==='beats'){error=guess.rate-target.rate;raw=100*Math.exp(-Math.abs(error)/3);}
     else {
       error=guess.amplitudes.slice(1).reduce((sum,value,index)=>sum+Math.abs(value-target.amplitudes[index+1]),0)/5;
       const rms=Math.sqrt(guess.amplitudes.slice(1).reduce((sum,value,index)=>sum+(value-target.amplitudes[index+1])**2,0)/5);
@@ -49,6 +52,7 @@ const ListeningGames = (() => {
       return bounds.find(([,high])=>target.frequency<=high);
     }
     if(type==='location')return target.angle < -5?'left':target.angle > 5?'right':'centre';
+    if(type==='beats')return target.rate<=4?[1,4]:target.rate<=8?[5,8]:[9,12];
     const largest=Math.max(...target.amplitudes.slice(1));
     return target.amplitudes.findIndex((value,index)=>index>0&&value===largest)+1;
   }

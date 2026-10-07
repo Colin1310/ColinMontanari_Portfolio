@@ -3,11 +3,17 @@
   const P = ListeningGames, $ = id => document.getElementById(id);
   const copy = {
     fr: {
-      skip:'Aller au contenu', portfolio:'↖ Portfolio', eyebrow:'Colin Montanari / Exercices d’écoute', title:'Jeux d’écoute<span>.</span>',
-      intro:'Trois jeux pour exercer l’écoute et relier la perception aux propriétés physiques du son.', introNote:'Cinq manches par jeu. Comparez, proposez une réponse et consultez l’explication.',
+      skip:'Aller au contenu', portfolio:'↖ Portfolio', eyebrow:'SoundLab / Ateliers d’écoute', title:'Ateliers d’écoute<span>.</span>',
+      intro:'Quatre ateliers pour exercer l’écoute et relier la perception aux propriétés physiques du son.', introNote:'Cinq essais par atelier. Comparez, proposez une réponse et consultez l’explication.',
       frequency:'Fréquence', frequencyCard:'Reconnaître la hauteur d’un son pur.', location:'Localisation', locationCard:'Retrouver la direction d’une source.', locationTag:'02 / Casque stéréo', harmonics:'Harmoniques', harmonicsCard:'Reconstruire un timbre à l’oreille.', harmonicsTag:'03 / Synthèse',
-      round:'Manche', score:'Score', best:'Meilleure série', yourGuess:'Votre proposition', answer:'Réponse', listenTarget:'Écouter le son à identifier', listenGuess:'Écouter votre proposition', stop:'Arrêter le son', submit:'Valider la réponse', hint:'Indice (−20 points)', replace:'Son inaudible : changer', change:'Changer de son', result:'Résultat', next:'Manche suivante', restart:'Nouvelle série', volume:'Volume d’écoute', understand:'Comprendre le résultat', rules:'Règles du jeu', series:'Bilan de la série',
-      method:'Les sons sont générés dans le navigateur, uniquement à votre demande. La réponse apparaît après validation. Les meilleurs scores sont conservés sur cet appareil. Ces jeux sont des exercices pédagogiques, pas un test d’audition.', sources:'Pour approfondir :', backLab:'↖ Retour au SoundLab', language:'Langue', games:'Jeux d’écoute', game:'Jeu',
+      round:'Essai', score:'Score', best:'Meilleure série', yourGuess:'Votre proposition', answer:'Réponse', listenTarget:'Écouter le son à identifier', listenGuess:'Écouter votre proposition', stop:'Arrêter le son', submit:'Valider la réponse', hint:'Indice (−20 points)', replace:'Son inaudible : changer', change:'Changer de son', result:'Résultat', next:'Manche suivante', restart:'Nouvelle série', volume:'Volume d’écoute', understand:'Comprendre le résultat', rules:'Principe de l’atelier', series:'Bilan de la série',
+      method:'Les sons sont générés dans le navigateur, uniquement à votre demande. La réponse apparaît après validation. Les meilleurs scores sont conservés sur cet appareil. Ces ateliers sont des exercices pédagogiques, pas un test d’audition.', sources:'Pour approfondir :', backLab:'↖ Retour au SoundLab', language:'Langue', games:'Ateliers d’écoute', game:'Atelier', physicsTab:'Physique du son', listeningTab:'Ateliers d’écoute', soundlabSections:'Sections SoundLab',
+      beats:'Battements',beatsCard:'Retrouver le rythme de deux fréquences proches.',beatsTag:'04 / Superposition',proposalRate:'Cadence proposée',beatsGap:'Écart de cadence',beatsHint:'La cadence se situe entre',beatsStage:'Enveloppe de votre proposition · 2 secondes',
+      beatsTask:'Écoutez deux sons purs proches de 220 Hz. Leur superposition produit des variations de niveau. Retrouvez le nombre de battements par seconde en comparant votre proposition.',
+      beatsGesture:'Déplacez le repère sur la règle pour régler la cadence, ou utilisez le curseur. Flèches gauche / droite : 0,5 Hz ; Maj : 1 Hz.',
+      beatsLearning:'Deux fréquences proches donnent une amplitude qui augmente et diminue régulièrement. La cadence des battements est égale à leur différence : 220 Hz et 224 Hz produisent 4 battements par seconde. Le tracé représente l’enveloppe de niveau, pas la fréquence aiguë des oscillations.',
+      beatsRules:'La réponse est une cadence de 1 à 12 Hz. Chaque écoute dure huit secondes, pour laisser le temps de compter. La fréquence de référence reste à 220 Hz ; la seconde fréquence sera dévoilée après validation. Le score dépend de l’écart entre les deux cadences.',
+      beatsNote:'Les deux fréquences sont envoyées ensemble aux deux oreilles. Comparez le rythme des fluctuations, avec un volume modéré.',
       proposalFrequency:'Fréquence proposée', proposalAngle:'Direction proposée', fundamental:'Fondamentale H1', amplitude:'Amplitude', isolate:'Écouter seulement H', resetPartials:'Repartir du son pur', left:'Gauche', right:'Droite', centre:'Centre', listener:'Auditeur', logarithmic:'Échelle logarithmique', front:'Sources situées devant vous', synthesis:'Amplitudes relatives à H1',
       listenFirst:'Écoutez d’abord le son à identifier, puis proposez une réponse.', invalid:'Saisissez une fréquence entre 20 et 15 000 Hz.', invalidOther:'Vérifiez les valeurs de votre proposition.', audioError:'L’écoute n’est pas disponible dans ce navigateur.', ready:'Vous pouvez maintenant comparer votre proposition et valider.', changed:'Nouveau son, même manche et même score. Écoutez-le avant de répondre.', hinted:'L’indice est appliqué à cette manche : −20 points.', exact:'Correspondance exacte', hintPenalty:'L’indice retire 20 points à cette manche.', points:'points',
       frequencyTask:'Écoutez un son pur tiré au hasard entre 20 et 15 000 Hz. Trouvez sa fréquence en comparant votre proposition au son original.',
@@ -28,11 +34,17 @@
       frequencyHint:'La fréquence se situe entre', locationHint:'La source est du côté :', harmonicsHint:'L’harmonique la plus présente après H1 est', actual:'Son original', submitted:'Proposition', pitchGap:'Écart de hauteur', angleGap:'Écart angulaire', amplitudeGap:'Écart moyen des amplitudes', amplitudeUnit:'points de pourcentage', inspect:'Comparez les repères bleus et orange, puis réécoutez les deux sons.', stronger:'à augmenter de', weaker:'à réduire de', selected:'Sélection', percentUnit:'%',
     },
     en: {
-      skip:'Skip to content', portfolio:'↖ Portfolio', eyebrow:'Colin Montanari / Listening exercises', title:'Listening games<span>.</span>',
-      intro:'Three games to train listening and connect perception with the physical properties of sound.', introNote:'Five rounds per game. Compare, submit an answer and read the explanation.',
+      skip:'Skip to content', portfolio:'↖ Portfolio', eyebrow:'SoundLab / Listening workshops', title:'Listening workshops<span>.</span>',
+      intro:'Four workshops to train listening and connect perception with the physical properties of sound.', introNote:'Five attempts per workshop. Compare, submit an answer and read the explanation.',
       frequency:'Frequency', frequencyCard:'Identify the pitch of a pure tone.', location:'Localization', locationCard:'Find the direction of a sound source.', locationTag:'02 / Stereo headphones', harmonics:'Harmonics', harmonicsCard:'Rebuild a timbre by ear.', harmonicsTag:'03 / Synthesis',
-      round:'Round', score:'Score', best:'Best series', yourGuess:'Your proposal', answer:'Answer', listenTarget:'Listen to the target sound', listenGuess:'Listen to your proposal', stop:'Stop audio', submit:'Submit answer', hint:'Hint (−20 points)', replace:'Inaudible tone: replace', change:'Change sound', result:'Result', next:'Next round', restart:'New series', volume:'Listening volume', understand:'Understanding the result', rules:'Game rules', series:'Series recap',
-      method:'Sounds are generated in the browser, only on request. The answer appears after submission. Best scores are stored on this device. These are educational exercises, not a hearing test.', sources:'Explore further:', backLab:'↖ Back to SoundLab', language:'Language', games:'Listening games', game:'Game',
+      round:'Attempt', score:'Score', best:'Best series', yourGuess:'Your proposal', answer:'Answer', listenTarget:'Listen to the target sound', listenGuess:'Listen to your proposal', stop:'Stop audio', submit:'Submit answer', hint:'Hint (−20 points)', replace:'Inaudible tone: replace', change:'Change sound', result:'Result', next:'Next round', restart:'New series', volume:'Listening volume', understand:'Understanding the result', rules:'Workshop guide', series:'Series recap',
+      method:'Sounds are generated in the browser, only on request. The answer appears after submission. Best scores are stored on this device. These workshops are educational exercises, not a hearing test.', sources:'Explore further:', backLab:'↖ Back to SoundLab', language:'Language', games:'Listening workshops', game:'Workshop', physicsTab:'Sound physics', listeningTab:'Listening workshops', soundlabSections:'SoundLab sections',
+      beats:'Beats',beatsCard:'Identify the rhythm of two nearby frequencies.',beatsTag:'04 / Superposition',proposalRate:'Proposed beat rate',beatsGap:'Beat rate difference',beatsHint:'The beat rate is between',beatsStage:'Your proposed amplitude envelope · 2 seconds',
+      beatsTask:'Listen to two pure tones close to 220 Hz. Their superposition produces level fluctuations. Find the number of beats per second by comparing your proposal.',
+      beatsGesture:'Move the marker along the ruler to adjust the rate, or use the slider. Left / right arrows: 0.5 Hz; Shift: 1 Hz.',
+      beatsLearning:'Two nearby frequencies produce an amplitude that regularly rises and falls. The beat rate equals their difference: 220 Hz and 224 Hz produce 4 beats per second. The plot shows the level envelope, not the rapid oscillations of the sound itself.',
+      beatsRules:'The answer is a rate between 1 and 12 Hz. Each playback lasts eight seconds, giving time to count. The reference frequency stays at 220 Hz; the second frequency is revealed after submission. The score follows the difference between the two beat rates.',
+      beatsNote:'Both frequencies are sent together to both ears. Compare the rhythm of the fluctuations at a moderate volume.',
       proposalFrequency:'Proposed frequency', proposalAngle:'Proposed direction', fundamental:'Fundamental H1', amplitude:'Amplitude', isolate:'Listen to H', resetPartials:'Start with a pure tone', left:'Left', right:'Right', centre:'Centre', listener:'Listener', logarithmic:'Logarithmic scale', front:'Sources positioned in front of you', synthesis:'Amplitudes relative to H1',
       listenFirst:'Listen to the target sound before submitting an answer.', invalid:'Enter a frequency between 20 and 15,000 Hz.', invalidOther:'Check the values of your proposal.', audioError:'Audio playback is unavailable in this browser.', ready:'You can now compare your proposal and submit an answer.', changed:'New sound, same round and score. Listen before answering.', hinted:'The hint applies to this round: −20 points.', exact:'Exact match', hintPenalty:'The hint subtracts 20 points from this round.', points:'points',
       frequencyTask:'Listen to a random pure tone between 20 and 15,000 Hz. Find its frequency by comparing your proposal with the original sound.',
@@ -55,21 +67,22 @@
   };
   let language='fr', active='frequency', selectedHarmonic=1, width=1, height=1, dragging=false, frame=0;
   const sessions={}, guesses={}, best={};
-  try {const saved=localStorage.getItem('colin-portfolio-language');language=saved==='en'?'en':'fr';const stored=JSON.parse(localStorage.getItem('colin-listening-games-best')||'{}');for(const key of ['frequency','location','harmonics'])if(Number.isInteger(stored?.[key])&&stored[key]>=0&&stored[key]<=500)best[key]=stored[key];}catch{}
+  try {const saved=localStorage.getItem('colin-portfolio-language');language=saved==='en'?'en':'fr';const stored=JSON.parse(localStorage.getItem('colin-listening-games-best')||'{}');for(const key of ['frequency','location','harmonics','beats'])if(Number.isInteger(stored?.[key])&&stored[key]>=0&&stored[key]<=500)best[key]=stored[key];}catch{}
   const t=key=>copy[language][key], number=value=>new Intl.NumberFormat(language==='fr'?'fr-FR':'en-GB',{maximumFractionDigits:1}).format(value);
   const session=()=>sessions[active], guess=()=>guesses[active], revealed=()=>session().phase!=='guess';
-  function defaults(type){return type==='frequency'?{frequency:440}:type==='location'?{angle:0}:{amplitudes:[1,0,0,0,0,0]};}
+  function defaults(type){return type==='frequency'?{frequency:440}:type==='location'?{angle:0}:type==='beats'?{rate:4}:{amplitudes:[1,0,0,0,0,0]};}
   function ensure(type){if(!sessions[type]){sessions[type]=new P.Session(type);guesses[type]=defaults(type);}}
   const audio=new ListeningAudio(label=>{
     $('play-target').setAttribute('aria-pressed',String(label==='target'));$('play-guess').setAttribute('aria-pressed',String(label==='guess'));
     document.querySelectorAll('[data-partial]').forEach(button=>button.setAttribute('aria-pressed',String(label===`partial-${button.dataset.partial}`)));
     const indicator=$('playback-indicator');indicator.parentElement.classList.remove('playing');indicator.style.transition='none';indicator.style.width='0';
-    if(label){void indicator.offsetWidth;indicator.style.removeProperty('transition');indicator.style.removeProperty('width');indicator.parentElement.classList.add('playing');}
+    if(label){void indicator.offsetWidth;indicator.style.transitionDuration=active==='beats'?'8s':'1.7s';indicator.style.removeProperty('width');indicator.parentElement.classList.add('playing');}
   });
-  function hintText(){const h=P.hint(active,session().target);return active==='frequency'?`${t('frequencyHint')} ${number(h[0])} ${language==='fr'?'et':'and'} ${number(h[1])} Hz.`:active==='location'?`${t('locationHint')} ${t(h).toLowerCase()}.`:`${t('harmonicsHint')} H${h}.`;}
+  function hintText(){const h=P.hint(active,session().target);return active==='frequency'||active==='beats'?`${t(active==='beats'?'beatsHint':'frequencyHint')} ${number(h[0])} ${language==='fr'?'et':'and'} ${number(h[1])} Hz.`:active==='location'?`${t('locationHint')} ${t(h).toLowerCase()}.`:`${t('harmonicsHint')} H${h}.`;}
   function controls(){
     if(active==='frequency')$('guess-controls').innerHTML=`<div class="guess-input"><label for="frequency-number">${t('proposalFrequency')}</label><div class="number-wrap"><input id="frequency-number" type="number" min="20" max="15000" step="1" inputmode="numeric" value="${guess().frequency}"><span>Hz</span></div><input id="frequency-slider" type="range" min="0" max="1000" step="1" value="${Math.round(P.frequencyPosition(guess().frequency)*1000)}" aria-label="${t('proposalFrequency')}"><div class="range-ends"><span>20 Hz</span><span>15 000 Hz</span></div></div>`;
     else if(active==='location')$('guess-controls').innerHTML=`<div class="guess-input"><label for="angle-slider">${t('proposalAngle')}<output id="angle-value" for="angle-slider">${guess().angle}°</output></label><input id="angle-slider" type="range" min="-75" max="75" step="1" value="${guess().angle}"><div class="range-ends"><span>−75° · ${t('left')}</span><span>+75° · ${t('right')}</span></div></div>`;
+    else if(active==='beats')$('guess-controls').innerHTML=`<p class="fundamental-label">${t('fundamental')}<strong>220 Hz</strong></p><div class="guess-input"><label for="beats-slider">${t('proposalRate')}<output id="beats-value" for="beats-slider">${number(guess().rate)} Hz</output></label><input id="beats-slider" type="range" min="1" max="12" step="0.5" value="${guess().rate}"><div class="range-ends"><span>1 Hz</span><span>12 Hz</span></div></div>`;
     else $('guess-controls').innerHTML=`<p class="fundamental-label">${t('fundamental')}<strong>${session().target.fundamental} Hz</strong></p>`+[1,2,3,4,5].map(i=>`<div class="guess-input harmonic-control"><label for="harmonic-${i}"><span class="partial-name"><span>H${i+1}<small> ${session().target.fundamental*(i+1)} Hz</small></span><button type="button" class="partial-button" data-partial="${i}" aria-label="${t('isolate')}${i+1}" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2l9 6-9 6z"/></svg></button></span><output id="harmonic-value-${i}" for="harmonic-${i}">${Math.round(guess().amplitudes[i]*100)} %</output></label><input id="harmonic-${i}" type="range" min="0" max="100" step="5" value="${guess().amplitudes[i]*100}" aria-label="H${i+1} · ${t('amplitude')}"></div>`).join('')+`<button type="button" class="text-button partial-reset" id="reset-partials">${t('resetPartials')}</button>`;
     $('guess-controls').querySelectorAll('input').forEach(input=>input.disabled=revealed());
     $('reset-partials')?.toggleAttribute('disabled',revealed());
@@ -77,19 +90,21 @@
   function updateInputs(){
     if(active==='frequency') {if(document.activeElement!==$('frequency-number'))$('frequency-number').value=guess().frequency;if(P.valid(active,guess()))$('frequency-slider').value=Math.round(P.frequencyPosition(guess().frequency)*1000);}
     if(active==='location'){$('angle-slider').value=guess().angle;$('angle-value').textContent=`${guess().angle}°`;}
+    if(active==='beats'){$('beats-slider').value=guess().rate;$('beats-value').textContent=`${number(guess().rate)} Hz`;}
     if(active==='harmonics')for(let i=1;i<6;i++){$(`harmonic-${i}`).value=Math.round(guess().amplitudes[i]*100);$(`harmonic-value-${i}`).textContent=`${Math.round(guess().amplitudes[i]*100)} %`;}
     $('play-guess').disabled=!P.valid(active,guess());queueDraw();
   }
   function recordDescription(record){
     if(active==='frequency')return `${t('actual')} : ${number(record.target.frequency)} Hz · ${t('submitted')} : ${number(record.guess.frequency)} Hz.`;
     if(active==='location')return `${t('actual')} : ${record.target.angle}° · ${t('submitted')} : ${record.guess.angle}°.`;
+    if(active==='beats')return `${t('actual')} : ${record.target.rate} Hz (220 Hz / ${220+record.target.rate} Hz) · ${t('submitted')} : ${number(record.guess.rate)} Hz.`;
     return `H2–H6 : ${record.target.amplitudes.slice(1).map(v=>Math.round(v*100)+' %').join(' / ')}.`;
   }
   function renderResult(){
     const s=session(),record=s.records.at(-1);$('result').hidden=!revealed();$('series').hidden=s.phase!=='complete';
     if(!revealed())return;
-    const gap=active==='frequency'?`${number(Math.abs(record.error))} cents`:active==='location'?`${number(Math.abs(record.error))}°`:`${number(record.error*100)} ${t('amplitudeUnit')}`;
-    $('result-title').textContent=Math.abs(record.error)<1e-9?t('exact'):`${t(active==='frequency'?'pitchGap':active==='location'?'angleGap':'amplitudeGap')} : ${gap}`;
+    const gap=active==='frequency'?`${number(Math.abs(record.error))} cents`:active==='location'?`${number(Math.abs(record.error))}°`:active==='beats'?`${number(Math.abs(record.error))} Hz`:`${number(record.error*100)} ${t('amplitudeUnit')}`;
+    $('result-title').textContent=Math.abs(record.error)<1e-9?t('exact'):`${t(active==='frequency'?'pitchGap':active==='location'?'angleGap':active==='beats'?'beatsGap':'amplitudeGap')} : ${gap}`;
     let explanation=recordDescription(record)+' '+t('inspect');
     if(active==='harmonics'){
       const differences=record.target.amplitudes.slice(1).map((v,i)=>({i:i+2,d:v-record.guess.amplitudes[i+1]})).filter(item=>Math.abs(item.d)>.025).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,2);
@@ -100,15 +115,15 @@
     if(s.phase==='complete'){$('series-total').textContent=`${s.total} / 500`;$('series-list').innerHTML=s.records.map((r,i)=>`<li>${t('round')} ${i+1}<strong>${r.score} / 100</strong><p>${recordDescription(r)}${r.hinted?' '+t('hintPenalty'):''}</p></li>`).join('');}
   }
   function render(){
-    document.documentElement.lang=language;document.title=`${language==='fr'?'Jeux d’écoute':'Listening games'} — Colin Montanari`;
+    document.documentElement.lang=language;document.title=`SoundLab · ${language==='fr'?'Ateliers d’écoute':'Listening workshops'} — Colin Montanari`;
     document.querySelectorAll('[data-copy]').forEach(el=>el.innerHTML=t(el.dataset.copy));
     document.querySelectorAll('[data-language]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.language===language)));
     document.querySelector('.language-switch').setAttribute('aria-label',t('language'));document.querySelector('.game-menu').setAttribute('aria-label',t('games'));
     document.querySelectorAll('[data-game]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.game===active)));
-    $('game-number').textContent=`${t('game')} 0${['frequency','location','harmonics'].indexOf(active)+1} / 03`;
+    $('game-number').textContent=`${t('game')} 0${['frequency','location','harmonics','beats'].indexOf(active)+1} / 04`;
     $('game-title').textContent=t(active);$('task').textContent=t(active+'Task');$('gesture-instructions').textContent=t(active+'Gesture');$('game-canvas').setAttribute('aria-label',t(active)+' · '+t('yourGuess'));
     $('learning').textContent=t(active+'Learning');$('rules').textContent=t(active+'Rules');$('listening-note').textContent=t(active+'Note');
-    $('stage-note').textContent=t(active==='frequency'?'logarithmic':active==='location'?'front':'synthesis');
+    $('stage-note').textContent=t(active==='frequency'?'logarithmic':active==='location'?'front':active==='beats'?'beatsStage':'synthesis');
     $('target-key').hidden=!revealed();$('replace').textContent=t(active==='frequency'?'replace':'change');$('replace').disabled=revealed();$('hint').disabled=revealed()||session().hinted;$('submit').disabled=revealed();
     $('hint-text').hidden=!session().hinted;$('hint-text').textContent=session().hinted?hintText():'';
     $('round-value').textContent=`${Math.min(5,session().records.length+(revealed()?0:1))} / 5`;$('score-value').textContent=`${session().total} / 500`;$('best-value').textContent=best[active]===undefined?'—':`${best[active]} / 500`;
@@ -119,12 +134,15 @@
     if(partial!==undefined)spec={type:'frequency',frequency:s.target.fundamental*(partial+1)};
     else if(type==='frequency')spec={type,frequency:data.frequency};
     else if(type==='location')spec={type,angle:data.angle,seed:s.target.seed};
+    else if(type==='beats')spec={type,fundamental:220,rate:data.rate};
     else spec={type,fundamental:s.target.fundamental,amplitudes:data.amplitudes};
     if(kind==='guess'&&!P.valid(type,guess()))return;
     try {const played=await audio.play(spec,partial===undefined?kind:`partial-${partial}`);if(played&&target){s.heard=true;if(active===type&&!revealed())$('message').textContent=t('ready');}}
     catch{$('message').textContent=t('audioError');}
   }
-  document.querySelectorAll('[data-game]').forEach(button=>button.addEventListener('click',()=>{audio.stop();active=button.dataset.game;ensure(active);selectedHarmonic=1;render();}));
+  function selectWorkshop(type){audio.stop();active=type;ensure(active);selectedHarmonic=1;render();}
+  document.querySelectorAll('[data-game]').forEach(button=>button.addEventListener('click',()=>{selectWorkshop(button.dataset.game);history.replaceState(null,'','#'+active);}));
+  window.addEventListener('hashchange',()=>{const type=location.hash.slice(1);if(['frequency','location','harmonics','beats'].includes(type))selectWorkshop(type);});
   document.querySelectorAll('[data-language]').forEach(button=>button.addEventListener('click',()=>{audio.stop();language=button.dataset.language;try{localStorage.setItem('colin-portfolio-language',language);}catch{}render();}));
   $('play-target').addEventListener('click',()=>listen('target'));$('play-guess').addEventListener('click',()=>listen('guess'));$('stop').addEventListener('click',()=>audio.stop());
   $('guess-controls').addEventListener('input',event=>{
@@ -132,6 +150,7 @@
     if(input.id==='frequency-number')guess().frequency=input.valueAsNumber;
     else if(input.id==='frequency-slider')guess().frequency=P.frequencyAt(input.valueAsNumber/1000);
     else if(input.id==='angle-slider')guess().angle=input.valueAsNumber;
+    else if(input.id==='beats-slider')guess().rate=input.valueAsNumber;
     else if(input.id.startsWith('harmonic-')){selectedHarmonic=Number(input.id.split('-')[1]);guess().amplitudes[selectedHarmonic]=input.valueAsNumber/100;}
     updateInputs();
   });
@@ -188,11 +207,21 @@
     const wave=(values,color)=>{const norm=P.normalizeHarmonics(values),points=[];for(let i=0;i<=200;i++){const phase=i/200*Math.PI*4,sum=norm.reduce((v,k,n)=>v+k*Math.sin((n+1)*phase),0);points.push([24+i/200*(width-48),cy-sum*amp]);}path(points,color,1.5);};
     if(revealed())wave(session().target.amplitudes,amber);wave(guess().amplitudes,blue);
   }
-  function draw(){ctx.clearRect(0,0,width,height);if(active==='frequency')drawFrequency();else if(active==='location')drawLocation();else drawHarmonics();}
+  function drawBeats(){
+    const left=30,right=width-30,ruler=height*.78,top=44,bottom=height*.56;
+    for(const time of [0,.5,1,1.5,2]){const x=left+time/2*(right-left);path([[x,top],[x,bottom]],line);text(`${time}s`,x,bottom+20,muted,11);}
+    const envelope=(rate,color)=>{const points=[];for(let i=0;i<=400;i++){const time=i/400*2;points.push([left+i/400*(right-left),bottom-Math.abs(Math.cos(Math.PI*rate*time))*(bottom-top)]);}path(points,color,1.6);};
+    if(revealed())envelope(session().target.rate,amber);envelope(guess().rate,blue);
+    path([[left,ruler],[right,ruler]],line,2);for(const rate of [1,4,8,12]){const x=left+(rate-1)/11*(right-left);path([[x,ruler-5],[x,ruler+5]],muted);text(`${rate} Hz`,x,ruler+25,muted,11);}
+    const marker=(rate,color,offset)=>{const x=left+(rate-1)/11*(right-left);dot(x,ruler,color);text(`${number(rate)} Hz`,x,ruler-15+offset,color,13);};
+    if(revealed())marker(session().target.rate,amber,-19);marker(guess().rate,blue,0);
+  }
+  function draw(){ctx.clearRect(0,0,width,height);if(active==='frequency')drawFrequency();else if(active==='location')drawLocation();else if(active==='beats')drawBeats();else drawHarmonics();}
   function pointer(event){
     const rect=canvas.getBoundingClientRect(),x=event.clientX-rect.left,y=event.clientY-rect.top;
     if(active==='frequency')guess().frequency=P.frequencyAt(P.clamp((x-30)/(width-60),0,1));
     else if(active==='location'){const a=arcGeometry();guess().angle=Math.round(P.clamp(Math.atan2(x-a.cx,a.cy-y)*180/Math.PI,-75,75));}
+    else if(active==='beats')guess().rate=Math.round((1+P.clamp((x-30)/(width-60),0,1)*11)*2)/2;
     else {const b=bars();selectedHarmonic=P.clamp(Math.floor((x-b.left)/b.step),1,5);guess().amplitudes[selectedHarmonic]=Math.round(P.clamp((b.bottom-y)/(b.bottom-b.top),0,1)*20)/20;}
     updateInputs();
   }
@@ -203,8 +232,10 @@
     if(revealed()||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key))return;event.preventDefault();const sign=event.key==='ArrowRight'||event.key==='ArrowUp'?1:-1;
     if(active==='frequency'){const value=P.valid(active,guess())?guess().frequency:440;guess().frequency=event.key==='Home'?20:event.key==='End'?15000:Math.round(P.clamp(value*2**(sign*(event.shiftKey?1:1/12)),20,15000));}
     else if(active==='location')guess().angle=event.key==='Home'?-75:event.key==='End'?75:P.clamp(guess().angle+sign*(event.shiftKey?5:1),-75,75);
+    else if(active==='beats')guess().rate=event.key==='Home'?1:event.key==='End'?12:P.clamp(guess().rate+sign*(event.shiftKey?1:.5),1,12);
     else {if(event.key==='ArrowLeft'||event.key==='ArrowRight')selectedHarmonic=P.clamp(selectedHarmonic+sign,1,5);else guess().amplitudes[selectedHarmonic]=event.key==='Home'?0:event.key==='End'?1:Math.round(P.clamp(guess().amplitudes[selectedHarmonic]+sign*(event.shiftKey?.25:.05),0,1)*20)/20;}
     updateInputs();
   });
+  const initial=location.hash.slice(1);if(['frequency','location','harmonics','beats'].includes(initial))active=initial;
   ensure(active);render();new ResizeObserver(resize).observe(canvas);resize();
 })();

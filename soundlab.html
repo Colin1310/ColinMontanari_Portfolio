@@ -7,15 +7,15 @@
   <meta name="theme-color" content="#0b0d11">
   <title>SoundLab — Colin Montanari</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230b0d11'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-family='Arial,sans-serif' font-size='29' font-weight='700' fill='%235078ff'%3ECM%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="soundlab.css?v=20261005-games">
+  <link rel="stylesheet" href="soundlab.css?v=20261007-soundlab">
   <script src="soundlab-physics.js" defer></script>
-  <script src="soundlab.js?v=20261005-games" defer></script>
+  <script src="soundlab.js?v=20261007-soundlab" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main" data-copy="skip">Aller au contenu</a>
   <header class="shell"><div class="nav">
     <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">CM</span>Colin Montanari</a>
-    <div class="nav-actions"><nav class="page-links" aria-label="Navigation"><a class="back" href="index.html" data-copy="back">↖ Retour au portfolio</a><a class="back" href="jeux.html" data-copy="games">Jeux d’écoute</a></nav>
+    <div class="nav-actions"><nav class="page-links" aria-label="Navigation"><a class="back" href="index.html" data-copy="back">↖ Retour au portfolio</a></nav>
       <div class="language-switch" role="group" aria-label="Langue">
         <button type="button" data-language="fr" aria-label="Français" aria-pressed="true">FR</button>
         <button type="button" data-language="en" aria-label="English" aria-pressed="false">EN</button>
@@ -27,6 +27,7 @@
       <div><p class="mono eyebrow" data-copy="eyebrow">Colin Montanari / Explorer le son</p><h1 id="title">SoundLab<span>.</span></h1></div>
       <div class="intro-copy"><p data-copy="intro">Ateliers interactifs sur la fréquence, l’amplitude et la propagation du son dans l’air.</p><p class="intro-note" data-copy="introNote">Sélectionnez un phénomène et manipulez les repères dans la visualisation.</p></div>
     </section>
+<nav class="soundlab-sections" aria-label="Sections SoundLab"><a href="soundlab.html" data-copy="physicsTab" aria-current="page">Physique du son</a><a href="ateliers.html" data-copy="listeningTab" >Ateliers d’écoute</a></nav>
     <nav class="workshops" aria-label="Ateliers SoundLab">
       <button class="workshop" type="button" data-workshop="frequency" aria-pressed="true" aria-controls="studio"><span class="workshop-top"><span class="mono">01</span><svg viewBox="0 0 76 26" aria-hidden="true"><path d="M0 13Q9-9 19 13T38 13T57 13T76 13"/></svg></span><strong data-copy="frequency">Fréquence</strong></button>
       <button class="workshop" type="button" data-workshop="amplitude" aria-pressed="false" aria-controls="studio"><span class="workshop-top"><span class="mono">02</span><svg viewBox="0 0 76 26" aria-hidden="true"><path d="M0 13Q9 3 19 13T38 13Q47-11 57 13T76 13"/></svg></span><strong data-copy="amplitude">Amplitude</strong></button>
@@ -42,6 +43,7 @@
       </div>
     </section>
     <section class="explanation" aria-labelledby="explanation-title"><div><h3 id="explanation-title" data-copy="observe">Observations</h3><p id="explanation"></p></div><div class="challenge"><p class="mono" data-copy="try">Expérience</p><p id="challenge-text"></p><button class="small-button" type="button" id="challenge"></button></div></section>
+    <section class="listening-hub" aria-labelledby="listening-hub-title"><div class="listening-hub-heading"><h2 id="listening-hub-title" data-copy="listeningTab">Ateliers d’écoute</h2><p data-copy="listeningIntro">Comparez les sons et proposez une réponse. Chaque essai permet de relier votre écoute à un phénomène.</p></div><div class="listening-hub-cards"><a class="listening-hub-card" href="ateliers.html#frequency"><h3 data-copy="frequency"></h3><p data-copy="frequencyExercise"></p><span aria-hidden="true">↗</span></a><a class="listening-hub-card" href="ateliers.html#location"><h3 data-copy="locationWorkshop"></h3><p data-copy="locationExercise"></p><span aria-hidden="true">↗</span></a><a class="listening-hub-card" href="ateliers.html#harmonics"><h3 data-copy="harmonicsWorkshop"></h3><p data-copy="harmonicsExercise"></p><span aria-hidden="true">↗</span></a><a class="listening-hub-card" href="ateliers.html#beats"><h3 data-copy="beatsWorkshop"></h3><p data-copy="beatsExercise"></p><span aria-hidden="true">↗</span></a></div></section>
     <section class="method" aria-label="À propos des expériences"><div><p data-copy="method">Modèles pédagogiques : animations ralenties, déplacements des particules amplifiés. Air homogène à environ 20 °C, vitesse du son ≈ 343 m/s. Les courbes montrent des variations de pression ; l’air oscille sur place.</p></div><div><p data-copy="sources">Pour approfondir les phénomènes :</p><div class="sources"><a href="https://www.acs.psu.edu/drussell/demos.html" target="_blank" rel="noopener">Penn State · Acoustics</a><a href="https://openstax.org/books/college-physics-2e/pages/17-3-sound-intensity-and-sound-level" target="_blank" rel="noopener">OpenStax · Sound intensity</a><a href="https://openstax.org/books/university-physics-volume-3/pages/4-1-single-slit-diffraction" target="_blank" rel="noopener">OpenStax · Diffraction</a></div></div></section>
     <noscript><p>Activez JavaScript pour utiliser les ateliers interactifs. / Enable JavaScript to use the interactive workshops.</p></noscript>
   </main>
