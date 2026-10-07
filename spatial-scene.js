@@ -10,9 +10,25 @@
   let lang=document.documentElement.lang==='en'?'en':'fr',state=SpatialSceneModel.state(0),targetProgress=0,lastTick=0,yaw=.58,pitch=.68,w=1,h=1,visible=false,raf=0,dirty=true,lastDraw=0,drag=null,audio=null,audioError=false,audioGeneration=0,manualPosition=false;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   function updateCopy(){lang=document.documentElement.lang==='en'?'en':'fr';root.querySelectorAll('[data-spatial-copy]').forEach(e=>e.textContent=copy[lang][e.dataset.spatialCopy]);canvas.setAttribute('aria-label',copy[lang].canvas);updateReadouts();requestDraw();}
-  function updateReadouts(){const c=copy[lang];$('spatial-status').textContent=state.blocked?c.blocked:c.open;$('spatial-status').dataset.blocked=String(state.blocked);if(button){button.textContent=audio?c.stop:audioError?c.failed:c.listen;button.setAttribute('aria-pressed',String(!!audio));}position.value=Math.round(state.progress*100);$('spatial-position-value').textContent=Math.round(state.progress*100)+' %';if($('spatial-frequency-value'))$('spatial-frequency-value').textContent=state.frequency+' Hz';$('spatial-straight').textContent=state.directLength.toFixed(2)+' m';$('spatial-shortest').textContent=state.blocked?state.diffraction.length.toFixed(2)+' m · '+c[state.diffraction.edge]:'—';$('spatial-alternate').textContent=state.blocked?state.candidates[1].length.toFixed(2)+' m · '+c[state.candidates[1].edge]:'—';$('spatial-wall-depth').textContent=state.blocked?state.wallDistance.toFixed(2)+' m':'—';$('spatial-explanation').textContent=state.blocked?c.blockedNote:c.clearNote;root.style.setProperty('--spatial-progress',state.progress);const chapter=state.blocked?'Blocked':state.progress>.5?'Exit':'Direct';$('spatial-chapter').textContent=c['chapter'+chapter];$('spatial-story-copy').textContent=c['story'+chapter];}
+  function updateReadouts(){
+    const c=copy[lang];
+    $('spatial-status').textContent=state.blocked?c.blocked:c.open;
+    $('spatial-status').dataset.blocked=String(state.blocked);
+    if(button){button.textContent=audio?c.stop:audioError?c.failed:c.listen;button.setAttribute('aria-pressed',String(!!audio));}
+    position.value=Math.round(state.progress*100);
+    $('spatial-position-value').textContent=Math.round(state.progress*100)+' %';
+    if($('spatial-frequency-value'))$('spatial-frequency-value').textContent=state.frequency+' Hz';
+    root.style.setProperty('--spatial-progress',state.progress);
+    const chapter=state.blocked?'Blocked':state.progress>.5?'Exit':'Direct';
+    $('spatial-chapter').textContent=c['chapter'+chapter];
+    $('spatial-story-copy').textContent=c['story'+chapter];
+  }
   function setPosition(t){targetProgress=Math.max(0,Math.min(1,t));if(reduced.matches||manualPosition){state=SpatialSceneModel.state(targetProgress,Number(frequency.value));updateReadouts();updateAudio();}requestDraw();}
-  function project(p){const t=reduced.matches?.5:state.progress,ease=t*t*(3-2*t),cameraYaw=yaw-.58+.3+.52*ease,cameraPitch=pitch-.68+.55+.16*ease;const x=p[0]*Math.cos(cameraYaw)-p[2]*Math.sin(cameraYaw),z=p[0]*Math.sin(cameraYaw)+p[2]*Math.cos(cameraYaw),y=p[1]-.65;const vertical=y*Math.cos(cameraPitch)-z*Math.sin(cameraPitch),depth=y*Math.sin(cameraPitch)+z*Math.cos(cameraPitch),perspective=17/(17-depth),scale=Math.min(w/11.8,h/7.8)*(1.30-.30*ease);return [w*(w>760?.57:.5)+x*scale*perspective,h*(w>760?.55:.64)-vertical*scale*perspective];}
+  const wallFaces=SpatialSceneModel.wallMesh(state.wall);
+  let view;
+  function cameraPose(){const t=reduced.matches?.5:state.progress,ease=t*t*(3-2*t),cameraYaw=yaw-.58+.3+.52*ease,cameraPitch=pitch-.68+.55+.16*ease,sinYaw=Math.sin(cameraYaw),cosYaw=Math.cos(cameraYaw),sinPitch=Math.sin(cameraPitch),cosPitch=Math.cos(cameraPitch);return {sinYaw,cosYaw,sinPitch,cosPitch,scale:Math.min(w/11.8,h/7.8)*(1.30-.30*ease),eye:[17*sinYaw*cosPitch,.65+17*sinPitch,17*cosYaw*cosPitch]};}
+  function viewDepth(p){return (p[1]-.65)*view.sinPitch+(p[0]*view.sinYaw+p[2]*view.cosYaw)*view.cosPitch;}
+  function project(p){const x=p[0]*view.cosYaw-p[2]*view.sinYaw,z=p[0]*view.sinYaw+p[2]*view.cosYaw,y=p[1]-.65,vertical=y*view.cosPitch-z*view.sinPitch,perspective=17/(17-viewDepth(p));return [w*(w>760?.57:.5)+x*view.scale*perspective,h*(w>760?.55:.64)-vertical*view.scale*perspective];}
   function line(points,color,width=1,dash=[]){ctx.beginPath();points.map(project).forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.stroke();ctx.setLineDash([]);}
   function polygon(points,fill,stroke){ctx.beginPath();points.map(project).forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke();}}
   function dot(p,color,r=4){const q=project(p);ctx.beginPath();ctx.arc(q[0],q[1],r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
@@ -20,16 +36,24 @@
   function node(p,color,text){line([[p[0],0,p[2]],p],color+'45',1,[2,5]);dot([p[0],0,p[2]],color+'55',3);const q=project(p),glow=ctx.createRadialGradient(q[0],q[1],0,q[0],q[1],30);glow.addColorStop(0,color+'32');glow.addColorStop(1,color+'00');ctx.fillStyle=glow;ctx.fillRect(q[0]-30,q[1]-30,60,60);ctx.beginPath();ctx.arc(q[0],q[1],11,0,Math.PI*2);ctx.strokeStyle=color+'65';ctx.lineWidth=1;ctx.stroke();dot(p,color,4);label(p,text,color);}
   function arrow(points,color){const a=project(SpatialSceneModel.pointOnPath(points,.85)),b=project(SpatialSceneModel.pointOnPath(points,.91)),angle=Math.atan2(b[1]-a[1],b[0]-a[0]);ctx.beginPath();ctx.moveTo(...b);ctx.lineTo(b[0]-9*Math.cos(angle-.4),b[1]-9*Math.sin(angle-.4));ctx.moveTo(...b);ctx.lineTo(b[0]-9*Math.cos(angle+.4),b[1]-9*Math.sin(angle+.4));ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();}
   function pulses(points,color,gain,phase){const count=Math.max(3,Math.min(12,Math.round(SpatialSceneModel.length(points)/state.wavelength))),alpha=ctx.globalAlpha;ctx.globalAlpha=alpha*Math.max(.2,Math.min(1,gain*1.5));for(let i=0;i<count;i++)dot(SpatialSceneModel.pointOnPath(points,(phase+i/count)%1),color,2.5);ctx.globalAlpha=alpha;}
-  function draw(now){ctx.clearRect(0,0,w,h);const c=copy[lang];ctx.save();for(let x=-7;x<=7;x++)line([[x,0,-7],[x,0,7]],'#334b6a55');for(let z=-7;z<=7;z++)line([[-7,0,z],[7,0,z]],'#334b6a55');const fade=ctx.createRadialGradient(w*.53,h*.6,0,w*.53,h*.6,Math.min(w*.65,h*.65));fade.addColorStop(0,'#fff');fade.addColorStop(.45,'#ffffffb0');fade.addColorStop(1,'#ffffff00');ctx.globalCompositeOperation='destination-in';ctx.fillStyle=fade;ctx.fillRect(0,0,w,h);ctx.restore();
+  function draw(now){view=cameraPose();ctx.clearRect(0,0,w,h);const c=copy[lang];ctx.save();for(let x=-7;x<=7;x++)line([[x,0,-7],[x,0,7]],'#334b6a55');for(let z=-7;z<=7;z++)line([[-7,0,z],[7,0,z]],'#334b6a55');const fade=ctx.createRadialGradient(w*.53,h*.6,0,w*.53,h*.6,Math.min(w*.65,h*.65));fade.addColorStop(0,'#fff');fade.addColorStop(.45,'#ffffffb0');fade.addColorStop(1,'#ffffff00');ctx.globalCompositeOperation='destination-in';ctx.fillStyle=fade;ctx.fillRect(0,0,w,h);ctx.restore();
     // Listener rail and faint reference planes make depth legible without enclosing the scene.
     line([[3,.01,-4.8],[3,.01,4.8]],'#8094b448',1.4,[3,5]);
     for(const z of [-4.8,0,4.8])dot([3,.02,z],'#53627c',2);
-    const a=.13,l=state.wall.halfLength,H=state.wall.height;
+    const a=state.wall.thickness/2,l=state.wall.halfLength,H=state.wall.height;
     polygon([[-a-.3,0,-l-.2],[a+.65,0,-l-.2],[a+.65,0,l+.5],[-a-.3,0,l+.5]],'#00000045');
-    const material=ctx.createLinearGradient(w*.4,h*.2,w*.6,h*.8);material.addColorStop(0,'#748cad80');material.addColorStop(.5,'#3b517773');material.addColorStop(1,'#1c2a4270');
-    const faces=[{points:[[-a,0,-l],[-a,H,-l],[-a,H,l],[-a,0,l]],color:material}, {points:[[a,0,-l],[a,H,-l],[a,H,l],[a,0,l]],color:material},{points:[[-a,H,-l],[a,H,-l],[a,H,l],[-a,H,l]],color:'#a9c2e28a'},{points:[[-a,0,-l],[a,0,-l],[a,H,-l],[-a,H,-l]],color:'#61758d80'},{points:[[-a,0,l],[a,0,l],[a,H,l],[-a,H,l]],color:'#61758d80'}];
-    faces.sort((u,v)=>project(u.points[0])[1]-project(v.points[0])[1]).forEach(f=>polygon(f.points,f.color,'#7e96b880'));
-    for(let y=.4;y<H;y+=.4)line([[a,y,-l],[a,y,l]],'#9bbbe315',.7);
+    // Closed solid: choose outward-facing surfaces, then paint by camera depth.
+    // Hidden transparent faces used to overlap and resemble a missing panel.
+    const faces=wallFaces.filter(face=>face.normal.reduce((sum,n,i)=>sum+n*(view.eye[i]-face.center[i]),0)>1e-6);
+    faces.sort((u,v)=>viewDepth(u.center)-viewDepth(v.center)).forEach(face=>{
+      const light=.32+.68*Math.max(0,face.normal.reduce((sum,n,i)=>sum+n*[.45,.8,.4][i],0));
+      const screen=face.points.map(project),center=project(face.center),top=Math.min(...screen.map(p=>p[1])),bottom=Math.max(...screen.map(p=>p[1]));
+      const color=boost=>`rgb(${Math.round(30+70*light*boost)},${Math.round(40+80*light*boost)},${Math.round(57+105*light*boost)})`;
+      const material=ctx.createLinearGradient(center[0],top,center[0],Math.max(top+1,bottom));
+      material.addColorStop(0,color(1.15));material.addColorStop(1,color(.8));
+      polygon(face.points,material,'#aec4e38a');
+      if(face.normal[0])for(let y=.4;y<H;y+=.4)line([[face.center[0],y,-l],[face.center[0],y,l]],'#b6ccec18',.7);
+    });
     label([0,H,0],c.wall,'#9aadc6',10,-18);
     const phase=reduced.matches?0:audio?(now/1000*.6)%1:(state.progress*2)%1;
     const reveal=state.blocked?Math.max(0,(state.occlusion-.5)*2):0;
