@@ -13,11 +13,12 @@ const SpatialSceneModel = (() => {
     // Blend near an edge to avoid abrupt filtering while the listener moves.
     const t=clamp((margin+.18)/.36,0,1), occlusion=t*t*(3-2*t);
     const directLength=distance(source,listener);
-    const candidates=[
-      {edge:'negative',points:[source,[0,1.25,-wall.halfLength],listener]},
-      {edge:'positive',points:[source,[0,1.25,wall.halfLength],listener]},
-      {edge:'top',points:[source,[0,wall.height,clamp(hit[2],-wall.halfLength,wall.halfLength)],listener]}
-    ].map(path=>({...path,length:length(path.points)})).sort((a,b)=>a.length-b.length);
+    // Both lateral routes stay at ear height and follow the wall's outer corners.
+    const candidates=[['negative',-1],['positive',1]].map(([edge,side])=>{
+      const z=side*wall.halfLength,a=wall.thickness/2;
+      const points=[source,[-a,source[1],z],[a,source[1],z],listener];
+      return {edge,points,length:length(points)};
+    }).sort((a,b)=>a.length-b.length);
     const diffraction=candidates[0], detour=diffraction.length-directLength;
     const incidence=Math.atan2(listener[2]-source[2],listener[0]-source[0]);
     // Reflection reverses the normal (x) component, preserving tangential components.
