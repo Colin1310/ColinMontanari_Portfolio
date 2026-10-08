@@ -19,9 +19,6 @@
     $('spatial-position-value').textContent=Math.round(state.progress*100)+' %';
     if($('spatial-frequency-value'))$('spatial-frequency-value').textContent=state.frequency+' Hz';
     root.style.setProperty('--spatial-progress',state.progress);
-    const chapter=state.blocked?'Blocked':state.progress>.5?'Exit':'Direct';
-    $('spatial-chapter').textContent=c['chapter'+chapter];
-    $('spatial-story-copy').textContent=c['story'+chapter];
   }
   function setPosition(t){targetProgress=Math.max(0,Math.min(1,t));if(reduced.matches||manualPosition){state=SpatialSceneModel.state(targetProgress,Number(frequency.value));updateReadouts();updateAudio();}requestDraw();}
   const wallFaces=SpatialSceneModel.wallMesh(state.wall);
